@@ -31,6 +31,17 @@ apt-get update || handle_error "Failed to update package list"
 print_status "Installing dependencies"
 apt-get install -y curl git build-essential || handle_error "Failed to install dependencies"
 
+# Install Starship
+print_status "Installing Starship"
+curl -sS https://starship.rs/install.sh | sh -s -- --yes || handle_error "Failed to install Starship"
+
+# Configure Starship for both bash and fish
+print_status "Configuring Starship"
+mkdir -p ~/.config
+echo 'eval "$(starship init bash)"' >> ~/.bashrc
+mkdir -p ~/.config/fish
+echo 'starship init fish | source' > ~/.config/fish/config.fish
+
 # Install Fish shell
 print_status "Installing Fish shell"
 apt-get install -y fish || handle_error "Failed to install Fish"
@@ -50,3 +61,4 @@ print_status "Setting Fish as default shell for $current_user"
 chsh -s $(which fish) "$current_user" || handle_error "Failed to set Fish as default shell"
 
 print_status "Installation complete! Please log out and log back in for changes to take effect."
+print_status "After logging back in, your new fish shell will be ready with starship prompt!"
