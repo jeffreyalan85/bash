@@ -3,10 +3,19 @@
 # Exit on any error
 set -e
 
+# Function to check if a package is installed
+check_package() {
+    dpkg -l "$1" &> /dev/null
+    return $?
+}
+
 echo "Starting secure Docker installation..."
 
-# Remove any old versions
-sudo apt-get remove docker docker-engine docker.io containerd runc
+# Only try to remove existing Docker if it's installed
+if check_package docker || check_package docker-engine || check_package docker.io || check_package containerd || check_package runc; then
+    echo "Removing old Docker versions..."
+    sudo apt-get remove -y docker docker-engine docker.io containerd runc || true
+fi
 
 # Update system
 sudo apt-get update
